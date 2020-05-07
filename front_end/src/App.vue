@@ -9,6 +9,7 @@
           </b-row>
         </b-col>
 
+
         <b-col cols="2">
           <b-row align-h="center">
             <b-img class="img" :src="require('./assets/icon.png')"></b-img>
@@ -19,11 +20,7 @@
         </b-col>
 
         <b-col cols="5" align-self="center">
-          <b-row align-h="center">
-            <div>here will be information about your models</div>
-            <div class="w-100"></div>
-            <div><b-img :src="require('./assets/loader.png')" width="20"></b-img></div>
-          </b-row>
+          <info-chart></info-chart>
         </b-col>
 
       </b-row>
@@ -35,7 +32,6 @@
           <b-row align-h="center">
             <b-img class="" :src="require('./assets/loader_1.png')"></b-img>
             <div v-if="recognize && preloader">recognize</div>...
-
           </b-row>
         </b-col>
       </b-row>
@@ -46,20 +42,30 @@
 
 <script>
   import Upload from './components/Upload'
+  import InfoChart from './components/InfoChart'
 
   export default {
-  name: 'App',
-  components: {
-    Upload
-  },
+    name: 'App',
+    components: {
+      Upload,
+      InfoChart
+    },
     data() {
       return {
         show: true,
         preloader: false,
         recognize: true
       }
+    },
+    mounted() {
+      this.$on('recognize', this.recognize_fun);
+    },
+    methods: {
+      recognize_fun() {
+        this.recognize = this.preloader = true;
+      }
     }
-}
+  }
 </script>
 
 <style>
@@ -90,8 +96,5 @@
   }
   .preloader {
     background-color: #4967a7;
-  }
-  .img_preloader {
-    width: 10%;
   }
 </style>
