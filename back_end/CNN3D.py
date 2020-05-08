@@ -16,7 +16,6 @@ class CNN3D:
         self.model = keras.models.load_model(path_model_h5)
 
     def prep_data(self, data):
-        print(data.shape)
         test = np.ndarray((data.shape[0], 4096, 3))
 
         # iterate in train and test, add the rgb dimention

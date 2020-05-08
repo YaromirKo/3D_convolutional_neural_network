@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-container fluid v-if="!preloader">
+    <b-container fluid v-show="!preloader">
       <b-row class="h-100">
 
         <b-col cols="5" align-self="center">
@@ -61,8 +61,8 @@
       this.$on('recognize', this.recognize_fun);
     },
     methods: {
-      recognize_fun() {
-        this.recognize = this.preloader = true;
+      recognize_fun(e) {
+        this.recognize = this.preloader = e;
       }
     }
   }

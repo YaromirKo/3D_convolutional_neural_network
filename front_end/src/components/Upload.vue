@@ -1,14 +1,13 @@
 <template>
     <div>
-        <div v-if="files.length === 0" class="upload-btn-wrapper">
+        <div v-if="!show_table" class="upload-btn-wrapper">
             <span class="btn">
                 <b-img class="img_upload" :src="require('../assets/upload.png')"></b-img>
                 upload file or files
             </span>
             <input type="file" id="input" multiple @change="onFileChange" accept=".ply"/>
         </div>
-
-       <div v-else>
+       <div v-if="show_table">
            <b-row>
                <div class="table_f" style="background-color:rgba(0, 0, 0, 0.2); height: 60vh; width: 50vh">
                    <table class="table">
@@ -16,13 +15,13 @@
                            <tr>
                                <th scope="col">#</th>
                                <th scope="col">name</th>
-                               <th scope="col" v-if="models.length === 0">size</th>
-                               <th scope="col" v-if="models.length === 0">delete</th>
-                               <th scope="col" v-if="models.length">class</th>
-                               <th scope="col" v-if="models.length">view data</th>
+                               <th scope="col" v-if="show_table_files">size</th>
+                               <th scope="col" v-if="show_table_files">delete</th>
+                               <th scope="col" v-if="show_table_models">class</th>
+                               <th scope="col" v-if="show_table_models">view data</th>
                            </tr>
                        </thead>
-                       <tbody v-if="models.length === 0">
+                       <tbody v-if="show_table_files">
                            <tr  v-for="(i, j) in files" :key="j" class="row_table">
                                <th scope="row">{{j+1}}</th>
                                <td>{{i.name}}</td>
@@ -34,14 +33,14 @@
                                </td>
                            </tr>
                        </tbody>
-                       <tbody v-if="models.length !== 0">
-                           <tr v-for="(i, j) in models" :key="j" class="row_table">
+                       <tbody v-if="show_table_models">
+                           <tr v-for="(i, j) in models.obj_s" :key="j" class="row_table">
                                <th scope="row">{{j+1}}</th>
                                <td>{{files[j].name}}</td>
-                               <td>{{i.class}}</td>
+                               <td>{{models.recognized[j]}}</td>
                                <td>
-                                   <span v-if="models.length !== 0">
-                                       <img alt ='img' title="delete this item" @click="delete_item(j)" width="25px" style="cursor: pointer; border-radius: 13px" :src="require('../assets/view.png')">
+                                   <span @click="view(j)">
+                                       <img alt ='img' title="view this item" @click="delete_item(j)" width="25px" style="cursor: pointer; border-radius: 13px" :src="require('../assets/view.png')">
                                    </span>
                                </td>
                            </tr>
@@ -49,7 +48,7 @@
                    </table>
                </div>
            </b-row>
-           <b-row align-h="center">
+           <b-row v-if="show_table_files" align-h="center">
                <div class="btn_send" @click="send">classify</div>
            </b-row>
        </div>
@@ -60,6 +59,7 @@
 <script>
     /* eslint-disable */
     import axios from 'axios'
+    import { bus } from '../main'
 
     export default {
         name: 'Upload',
@@ -67,6 +67,9 @@
             return {
                 files: [],
                 show_uploader: true,
+                show_table: false,
+                show_table_files: false,
+                show_table_models: false,
                 models: []
             }
         },
@@ -74,14 +77,23 @@
             onFileChange(e) {
                 this.files = Object.values(e.target.files);
                 this.show_uploader = false;
-                console.log(this.files);
+                this.show_table = true;
+                this.show_table_files = true;
             },
             delete_item(index) {
-                this.files.splice(index, 1)
+                this.files.splice(index, 1);
+                if (this.files.models.length === 0) {
+                    this.show_table = false;
+                    this.show_table_files = false;
+                }
+            },
+            view(index) {
+                bus.$emit('view', index);
             },
             send() {
                 if (this.files.length !== 0) {
                     this.$parent.$emit('recognize', true);
+                    this.show_table_files = false;
                     let files_pack = new FormData();
                     for (let i = 0; i < this.files.length; i++) {
                         files_pack.append("file", this.files[i])
@@ -91,11 +103,12 @@
                             'Content-Type': 'multipart/form-data',
                             'Access-Control-Allow-Origin': "*"
                         }};
-                    axios.post('localhost:5000/get_3d_cnn', files_pack, headers)
+                    axios.post('http://127.0.0.1:5000/get_3d_info_cnn', files_pack, headers)
                     .then((response) => {
-                        console.log(response);
                         this.models = response.data;
                         this.$parent.$emit('recognize', false);
+                        bus.$emit('models', this.models);
+                        this.show_table_models = true;
                     })
                     .catch((error) => {
                         this.$parent.$emit('recognize', false);
