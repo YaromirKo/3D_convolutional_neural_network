@@ -27,20 +27,20 @@
                                <td>{{i.name}}</td>
                                <td>{{(i.size / 1024).toFixed(2)}} kb</td>
                                <td>
-                                   <span>
-                                       <img alt ='img' title="delete this item" @click="delete_item(j)" width="25px" style="cursor: pointer; border-radius: 13px" :src="require('../assets/delete.png')">
+                                   <span @click="delete_item(j)">
+                                       <img alt ='img' title="delete this item"  width="25px" style="cursor: pointer; border-radius: 13px" :src="require('../assets/delete.png')">
                                    </span>
                                </td>
                            </tr>
                        </tbody>
                        <tbody v-if="show_table_models">
-                           <tr v-for="(i, j) in models.obj_s" :key="j" class="row_table">
+                           <tr v-for="(i, j) in models['list_recognized']" :key="j" class="row_table">
                                <th scope="row">{{j+1}}</th>
                                <td>{{files[j].name}}</td>
-                               <td>{{models.recognized[j]}}</td>
+                               <td>{{i}}</td>
                                <td>
                                    <span @click="view(j)">
-                                       <img alt ='img' title="view this item" @click="delete_item(j)" width="25px" style="cursor: pointer; border-radius: 13px" :src="require('../assets/view.png')">
+                                       <img alt ='img' title="view this item" width="25px" style="cursor: pointer; border-radius: 13px" :src="require('../assets/view.png')">
                                    </span>
                                </td>
                            </tr>
@@ -48,8 +48,13 @@
                    </table>
                </div>
            </b-row>
+
+
            <b-row v-if="show_table_files" align-h="center">
                <div class="btn_send" @click="send">classify</div>
+           </b-row>
+           <b-row v-if="show_table_models" align-h="center">
+               <div class="btn_send" @click="new_send">upload new data</div>
            </b-row>
        </div>
 
@@ -88,7 +93,19 @@
                 }
             },
             view(index) {
-                bus.$emit('view', index);
+                //bus.$emit('delete_animate');
+                let recognized =  this.models['list_recognized'][index];
+                let voxel_grid =  this.models['list_voxel_grid'][index];
+                let points =  this.models['list_points'][index];
+                bus.$emit('view_model', {'recognized': recognized, 'voxel_grid': voxel_grid, 'points': points});
+            },
+            new_send() {
+                bus.$emit('delete_animate');
+                this.show_table_models = false;
+                this.show_table = false;
+                this.show_uploader = true;
+                this.files = [];
+                this.models = [];
             },
             send() {
                 if (this.files.length !== 0) {
@@ -107,11 +124,12 @@
                     .then((response) => {
                         this.models = response.data;
                         this.$parent.$emit('recognize', false);
-                        bus.$emit('models', this.models);
+                        this.view(0);
                         this.show_table_models = true;
                     })
                     .catch((error) => {
                         this.$parent.$emit('recognize', false);
+                        this.new_send();
                     })
                 }
             }

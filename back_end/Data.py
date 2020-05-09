@@ -80,7 +80,7 @@ class Data(object):
 
         return arr_obj
 
-    def get_plot_points(self):
+    def get_points(self):
 
         colors = None
         size = 0.1
@@ -95,8 +95,8 @@ class Data(object):
             look = xyz.mean(0)
             if colors is None:
                 colors = [1, 0.5, 0] * len(positions)
-            elif len(colors.shape) > 1:
-                colors = colors.reshape(-1).tolist()
+            # elif len(colors) > 1:
+            #     colors = colors.reshape(-1).tolist()
             if axis:
                 axis_size = xyz.ptp() * 1.5
             else:
