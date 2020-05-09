@@ -34,7 +34,7 @@ def get_3d_info_cnn():
     # # voxel = D.get_n_voxels()
     # # structure = D.get_structure()
     # # vector = D.get_vector()
-    obj_s = D.get_voxel_grid()
-    # with open('data.json', 'w') as f:
-    #     json.dump(obj_s, f)
+    obj_s = D.get_plot_points()
+    with open('data.json', 'w') as f:
+        json.dump(obj_s, f)
     return 0

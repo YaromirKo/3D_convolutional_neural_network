@@ -3,14 +3,14 @@
     <b-container fluid v-show="!preloader">
       <b-row class="h-100">
 
-        <b-col cols="5" align-self="center">
+        <b-col cols="4" align-self="center">
           <b-row align-h="center">
             <upload v-show="show"></upload>
           </b-row>
         </b-col>
 
 
-        <b-col cols="2">
+        <b-col cols="auto">
           <b-row align-h="center">
             <b-img class="img" :src="require('./assets/icon.png')"></b-img>
           </b-row>
@@ -19,7 +19,7 @@
           </b-row>
         </b-col>
 
-        <b-col cols="5" align-self="center">
+        <b-col cols="6" align-self="center">
           <info-chart></info-chart>
         </b-col>
 

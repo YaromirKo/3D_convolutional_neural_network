@@ -9,7 +9,7 @@ class Data(object):
     def __init__(self, data):
         self.data = data
         self.VG = []
-        self.arr_obj = []
+        self.points = []
 
     def get_voxel_grid_vector(self):
         vox = []
@@ -18,6 +18,7 @@ class Data(object):
             cloud_points = points.get_sample("mesh_random", n=10000, as_PyntCloud=True)
             new_format_voxel = pd.DataFrame({"x": cloud_points.points['x'], "y": cloud_points.points['y'],
                                              "z": cloud_points.points['z']}).to_numpy()
+            self.points.append(new_format_voxel)
             voxel_grid = VoxelGrid(new_format_voxel, x_y_z=[16, 16, 16])
             self.VG.append(voxel_grid)
             _vector = np.reshape(voxel_grid.vector, (4096))
@@ -39,6 +40,7 @@ class Data(object):
     def get_voxel_grid(self):
         cmap = "Oranges"
         axis = False
+        arr_obj = []
 
         for v_g in self.VG:
             scaled_shape = v_g.shape / min(v_g.shape)
@@ -57,7 +59,7 @@ class Data(object):
             else:
                 axis_size = 0
 
-            self.arr_obj.append({
+            arr_obj.append({
                 "camera_x": str(camera_position[0]),
                 "camera_y": str(camera_position[1]),
                 "camera_z": str(camera_position[2]),
@@ -76,4 +78,40 @@ class Data(object):
                 "n_voxels": str(sum(v_g.vector.reshape(-1) > 0)),
                 "axis_size": str(axis_size)})
 
-        return self.arr_obj
+        return arr_obj
+
+    def get_plot_points(self):
+
+        colors = None
+        size = 0.1
+        axis = False
+        arr_obj = []
+
+        for model_xyz in self.points:
+
+            xyz = model_xyz
+            positions = xyz.reshape(-1).tolist()
+            camera_position = xyz.max(0) + abs(xyz.max(0))
+            look = xyz.mean(0)
+            if colors is None:
+                colors = [1, 0.5, 0] * len(positions)
+            elif len(colors.shape) > 1:
+                colors = colors.reshape(-1).tolist()
+            if axis:
+                axis_size = xyz.ptp() * 1.5
+            else:
+                axis_size = 0
+
+            arr_obj.append({
+                "camera_x": str(camera_position[0]),
+                "camera_y": str(camera_position[1]),
+                "camera_z": str(camera_position[2]),
+                "look_x": str(look[0]),
+                "look_y": str(look[1]),
+                "look_z": str(look[2]),
+                "positions": str(positions),
+                "colors": str(colors),
+                "points_size": str(size),
+                "axis_size": str(axis_size)})
+
+        return arr_obj
