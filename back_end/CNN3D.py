@@ -16,7 +16,7 @@ class CNN3D:
         self.model = keras.models.load_model(path_model_h5)
 
     def prep_data(self, data):
-        test = np.ndarray((data.shape[0], 4096, 3))
+        pred = np.ndarray((data.shape[0], 4096, 3))
 
         # iterate in train and test, add the rgb dimention
         def add_rgb_dimention(array):
@@ -25,10 +25,10 @@ class CNN3D:
             return array
 
         for i in range(data.shape[0]):
-            test[i] = add_rgb_dimention(data[i])
+            pred[i] = add_rgb_dimention(data[i])
 
         # convert to 1 + 4D space (1st argument represents number of rows in the dataset)
-        return test.reshape(data.shape[0], 16, 16, 16, 3)
+        return pred.reshape(data.shape[0], 16, 16, 16, 3)
 
     def pred(self, data):
         result = self.model.predict(self.prep_data(data))

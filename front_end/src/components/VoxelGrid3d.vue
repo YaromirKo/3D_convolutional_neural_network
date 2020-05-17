@@ -27,6 +27,7 @@
                 let camera_y = this.voxel_grid['camera_y'];
                 let camera_z = this.voxel_grid['camera_z'];
 
+
                 let look_x = this.voxel_grid['look_x'];
                 let look_y = this.voxel_grid['look_y'];
                 let look_z = this.voxel_grid['look_z'];
@@ -60,7 +61,7 @@
 
                 let axesHelper = new THREE.AxesHelper( tmp_cam - 15 );
 
-                this.scene.add( axesHelper );
+               this.scene.add( axesHelper );
 
                 let helper = new THREE.GridHelper( tmp_cam, tmp_cam / 3 );
 
@@ -68,10 +69,10 @@
                 helper.material.transparent = true;
                 this.scene.add( helper );
 
-                if (axis_size > 0) {
-                    let axisHelper = new THREE.AxisHelper( axis_size );
-                    this.scene.add( axisHelper );
-                }
+                // if (axis_size > 0) {
+                //     let axisHelper = new THREE.AxisHelper( axis_size );
+                //     this.scene.add( axisHelper );
+                // }
 
                 let geometry = new THREE.BoxGeometry( S_x, S_z, S_y );
 

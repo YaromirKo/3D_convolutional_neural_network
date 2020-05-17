@@ -29,6 +29,7 @@
                 let look_x = this.points['look_x'];
                 let look_y = this.points['look_y'];
                 let look_z = this.points['look_z'];
+
                 let positions = new Float32Array(JSON.parse(this.points['positions']));
                 let colors = new Float32Array(JSON.parse(this.points['colors']));
 
@@ -47,10 +48,10 @@
                 this.camera.position.z = camera_z;
                 this.camera.up = new THREE.Vector3( 0, 1, 0 );
 
-                if (axis_size > 0) {
-                    let axisHelper = new THREE.AxisHelper( axis_size );
-                    this.scene.add( axisHelper );
-                }
+                // if (axis_size > 0) {
+                //     let axisHelper = new THREE.AxesHelper( axis_size );
+                //     this.scene.add( axisHelper );
+                // }
 
                 let geometry = new THREE.BufferGeometry();
                 geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );

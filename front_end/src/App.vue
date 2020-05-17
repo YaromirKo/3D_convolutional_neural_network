@@ -3,7 +3,7 @@
     <b-container fluid v-show="!preloader">
       <b-row class="h-100">
 
-        <b-col cols="4" align-self="center">
+        <b-col cols="5" align-self="center">
           <b-row align-h="center">
             <upload v-show="show"></upload>
           </b-row>

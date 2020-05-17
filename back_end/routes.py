@@ -2,7 +2,7 @@ from flask import jsonify, request
 import os
 from app import *
 from Data import Data
-# import json
+import json
 
 
 @app.route('/get_3d_info_cnn', methods=['GET', 'POST'])
@@ -36,7 +36,7 @@ def get_3d_info_cnn():
 #     # # voxel = D.get_n_voxels()
 #     # # structure = D.get_structure()
 #     # # vector = D.get_vector()
-#     obj_s = D.get_plot_points()
+#     obj_s = D.get_points()
 #     with open('data.json', 'w') as f:
 #         json.dump(obj_s, f)
-#     return 0
+#     return jsonify(list_recognized=obj_s)

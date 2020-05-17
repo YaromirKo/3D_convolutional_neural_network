@@ -43,6 +43,7 @@ class Data(object):
         arr_obj = []
 
         for v_g in self.VG:
+
             scaled_shape = v_g.shape / min(v_g.shape)
 
             # coordinates returned from argwhere are inversed so use [:, ::-1]
@@ -89,13 +90,20 @@ class Data(object):
 
         for model_xyz in self.points:
 
+            # tmp = np.zeros((len(model_xyz.structure[:, 0]), 3))
+            #
+            # tmp[:, 0] = model_xyz.structure[:, 0]
+            # tmp[:, 1] = model_xyz.structure[:, 1]
+            # tmp[:, 2] = model_xyz.structure[:, 2]
+
             xyz = model_xyz
+
             positions = xyz.reshape(-1).tolist()
             camera_position = xyz.max(0) + abs(xyz.max(0))
             look = xyz.mean(0)
             if colors is None:
                 colors = [1, 0.5, 0] * len(positions)
-            # elif len(colors) > 1:
+            # elif len(colors.shape) > 1:
             #     colors = colors.reshape(-1).tolist()
             if axis:
                 axis_size = xyz.ptp() * 1.5

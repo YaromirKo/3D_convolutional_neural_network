@@ -1,63 +1,68 @@
 <template>
     <div>
-        <div v-if="!show_table" class="upload-btn-wrapper">
-            <span class="btn">
-                <b-img class="img_upload" :src="require('../assets/upload.png')"></b-img>
-                upload file or files
-            </span>
-            <input type="file" id="input" multiple @change="onFileChange" accept=".ply"/>
-        </div>
-       <div v-if="show_table">
-           <b-row>
-               <div class="table_f" style="background-color:rgba(0, 0, 0, 0.2); height: 60vh; width: 50vh">
-                   <table class="table">
-                       <thead>
-                           <tr>
-                               <th scope="col">#</th>
-                               <th scope="col">name</th>
-                               <th scope="col" v-if="show_table_files">size</th>
-                               <th scope="col" v-if="show_table_files">delete</th>
-                               <th scope="col" v-if="show_table_models">class</th>
-                               <th scope="col" v-if="show_table_models">view data</th>
-                           </tr>
-                       </thead>
-                       <tbody v-if="show_table_files">
-                           <tr  v-for="(i, j) in files" :key="j" class="row_table">
-                               <th scope="row">{{j+1}}</th>
-                               <td>{{i.name}}</td>
-                               <td>{{(i.size / 1024).toFixed(2)}} kb</td>
-                               <td>
+        <b-container fuild>
+            <b-row>
+                <b-col cols="12">
+                    <div v-if="!show_table" class="upload-btn-wrapper">
+                        <span class="btn">
+                            <b-img class="img_upload" :src="require('../assets/upload.png')"></b-img>
+                            upload file or files
+                        </span>
+                        <input type="file" id="input" multiple @change="onFileChange" accept=".ply"/>
+                    </div>
+                    <div v-if="show_table">
+                        <b-row>
+                            <div class="table_f" style="background-color:rgba(0, 0, 0, 0.2); height: 60vh; width: 50vh;">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">name</th>
+                                        <th scope="col" v-if="show_table_files">size</th>
+                                        <th scope="col" v-if="show_table_files">delete</th>
+                                        <th scope="col" v-if="show_table_models">class</th>
+                                        <th scope="col" v-if="show_table_models">view data</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody v-if="show_table_files">
+                                    <tr  v-for="(i, j) in files" :key="j" class="row_table">
+                                        <th scope="row">{{j+1}}</th>
+                                        <td>{{i.name}}</td>
+                                        <td>{{(i.size / 1024).toFixed(2)}} kb</td>
+                                        <td>
                                    <span @click="delete_item(j)">
                                        <img alt ='img' title="delete this item"  width="25px" style="cursor: pointer; border-radius: 13px" :src="require('../assets/delete.png')">
                                    </span>
-                               </td>
-                           </tr>
-                       </tbody>
-                       <tbody v-if="show_table_models">
-                           <tr v-for="(i, j) in models['list_recognized']" :key="j" class="row_table">
-                               <th scope="row">{{j+1}}</th>
-                               <td>{{files[j].name}}</td>
-                               <td>{{i}}</td>
-                               <td>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tbody v-if="show_table_models">
+                                    <tr v-for="(i, j) in models['list_recognized']" :key="j" class="row_table">
+                                        <th scope="row">{{j+1}}</th>
+                                        <td>{{files[j].name}}</td>
+                                        <td>{{i}}</td>
+                                        <td>
                                    <span @click="view(j)">
                                        <img alt ='img' title="view this item" width="25px" style="cursor: pointer; border-radius: 13px" :src="require('../assets/view.png')">
                                    </span>
-                               </td>
-                           </tr>
-                       </tbody>
-                   </table>
-               </div>
-           </b-row>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </b-row>
 
 
-           <b-row v-if="show_table_files" align-h="center">
-               <div class="btn_send" @click="send">classify</div>
-           </b-row>
-           <b-row v-if="show_table_models" align-h="center">
-               <div class="btn_send" @click="new_send">upload new data</div>
-           </b-row>
-       </div>
-
+                        <b-row v-if="show_table_files" align-h="center">
+                            <div class="btn_send" @click="send">classify</div>
+                        </b-row>
+                        <b-row v-if="show_table_models" align-h="center">
+                            <div class="btn_up_new_data" @click="new_send">upload new data</div>
+                        </b-row>
+                    </div>
+                </b-col>
+            </b-row>
+        </b-container>
     </div>
 </template>
 
@@ -87,7 +92,7 @@
             },
             delete_item(index) {
                 this.files.splice(index, 1);
-                if (this.files.models.length === 0) {
+                if (this.files.length === 0) {
                     this.show_table = false;
                     this.show_table_files = false;
                 }
@@ -121,6 +126,7 @@
                             'Access-Control-Allow-Origin': "*"
                         }};
                     axios.post('http://127.0.0.1:5000/get_3d_info_cnn', files_pack, headers)
+                    // axios.post('http://127.0.0.1:5000/upload', files_pack, headers)
                     .then((response) => {
                         this.models = response.data;
                         this.$parent.$emit('recognize', false);
@@ -156,6 +162,19 @@
     }
     .img_upload {
         width: 50px;
+    }
+    .btn_up_new_data {
+        margin: 15px;
+        padding: 5px 15px 5px 15px;
+        border: 1px solid greenyellow;
+        border-radius: 5px;
+        background-color: #8acb27;
+        cursor: pointer;
+        text-align: center;
+    }
+    .btn_up_new_data:hover {
+        border: 1px solid black;
+        background-color: greenyellow;
     }
     .upload-btn-wrapper {
         position: relative;
