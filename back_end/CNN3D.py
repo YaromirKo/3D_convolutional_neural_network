@@ -1,6 +1,7 @@
 from tensorflow import keras
 import numpy as np
 from matplotlib.pyplot import cm
+import tensorflow as tf
 
 path_model_h5 = 'figure_w.h5'
 
@@ -13,6 +14,18 @@ obj = [
 
 class CNN3D:
     def __init__(self):
+        gpus = tf.config.experimental.list_physical_devices('GPU')
+        if gpus:
+            try:
+                # Currently, memory growth needs to be the same across GPUs
+                for gpu in gpus:
+                    tf.config.experimental.set_memory_growth(gpu, True)
+                logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+                print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+            except RuntimeError as e:
+                # Memory growth must be set before GPUs have been initialized
+                print(e)
+
         self.model = keras.models.load_model(path_model_h5)
 
     def prep_data(self, data):
